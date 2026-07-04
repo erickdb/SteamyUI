@@ -1,7 +1,4 @@
 # ♨️ SteamyUI
-
-**SteamyUI** is a modern, responsive, and premium UI library designed for Roblox Script Hubs. It features lightning-fast performance, smooth spring transitions, full Mobile/Tablet layout adaptation, and a draggable, custom-styled Floating Action Button (FAB).
-
 ---
 
 ## 🚀 Quick Start
