@@ -10,7 +10,7 @@
 Paste the following code into your exploit executor:
 
 ```lua
-local SteamyUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/USERNAME/REPO_NAME/main/SteamyUI.lua"))()
+local SteamyUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/erickdb/SteamyUI/refs/heads/main/SteamyUI.lua"))()
 ```
 
 ### For Roblox Studio Testing (Rojo)
