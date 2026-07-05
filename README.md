@@ -22,6 +22,22 @@ local SteamyUI = require(game:GetService("ReplicatedStorage"):WaitForChild("Stea
 
 ---
 
+## 📁 Workspace Folder Structure
+
+When you initialize SteamyUI, it automatically manages a structured filesystem inside the executor's `workspace/` directory.
+
+```text
+workspace/
+└── Steamy/                     <-- Root Folder (Customizable via 'Folder' option)
+    ├── SavedKeys.json          <-- Auto-saved KeySystem license file
+    └── Configs/                <-- Subfolder for configurations
+        ├── Default.json        <-- Default config loaded on start (auto-created)
+        ├── custom_config.json  <-- Saved by users
+        └── rage_settings.json  <-- Saved by users
+```
+
+---
+
 ## 🛠️ API Reference & Parameter Breakdowns
 
 Every component and function option in SteamyUI is detailed below with parameter definitions.
@@ -36,6 +52,7 @@ local Window = SteamyUI:CreateWindow({
     Logo = "rbxassetid://133673716990208", 
     Size = UDim2.new(0, 580, 0, 430),       
     Theme = "Darker",                       
+    Folder = "Steamy",                      -- Root folder name in executor workspace
     
     KeySystem = true,
     KeySettings = {
@@ -44,14 +61,11 @@ local Window = SteamyUI:CreateWindow({
         Description = "Enter your license key to verify access. Key is 'SecretKey123'.",
         GetKeyLink = "https://discord.gg/steamy-ui", 
         Keys = {"SecretKey123"},
-        SaveKey = true, 
-        Folder = "SteamyConfigs",
-        FileName = "saved_key.json"
+        SaveKey = true 
     },
     
     ConfigSettings = {
-        Folder = "SteamyConfigs",
-        DefaultConfig = "default"
+        DefaultConfig = "Default"           -- Loads Configs/Default.json on start
     },
     
     FloatButton = {
@@ -68,21 +82,19 @@ local Window = SteamyUI:CreateWindow({
 * **`SubTitle`** *(string)*: A small secondary text right below the title.
 * **`Logo`** *(string/number)*: Asset/Decal ID used as the GUI icon. Numeric IDs are automatically resolved via Roblox Thumbnail API.
 * **`Size`** *(UDim2)*: Size of the UI window on Desktop. Auto-rescales on Mobile/Tablets to cover viewport safe areas.
-* **`Theme`** *(string)*: The startup color theme. Options: `"Darker"` *(default)*, `"Dark"`, `"Light"`, `"Aqua"`.
-* **`HasSettings`** *(boolean)*: If set to `true`, automatically builds an options/settings tab. Default is `true`.
+* **`Theme`** *(string)*: The startup color theme. Options: `"Darker"` *(default)*, `"Dark"`, `"Light"`, `"Aqua"`, `"Amethyst"`, etc. (See full list at the bottom).
+* **`Folder`** *(string)*: The main root folder name created inside the executor's `workspace/` directory. Defaults to `"Steamy"`.
+* **`HasSettings`** *(boolean)*: If set to `true`, automatically builds an options/settings tab. Default is `false` (allowing developers to create their own custom settings layout).
 * **`KeySystem`** *(boolean)*: Set to `true` to block the main GUI until key verification succeeds.
-* **`KeySettings`** *(table)*: Authorization panel configuration (active only if `KeySystem = true`):
+* **`KeySettings`** *(table)*: Authorization panel configuration (active only if `KeySystem = true`). License keys are automatically stored directly under the root folder as `SavedKeys.json`:
   * **`Title`** *(string)*: Header text of the Key System popup.
   * **`Subtitle`** *(string)*: Small text under the title.
   * **`Description`** *(string)*: Instructions for the user.
   * **`GetKeyLink`** *(string)*: URL shown to the user (e.g. Linkvertise, Discord) where they can obtain a key.
   * **`Keys`** *(array of strings)*: List of valid activation keys.
   * **`SaveKey`** *(boolean)*: Auto-saves successfully entered keys to bypass the key system on subsequent injects.
-  * **`Folder`** *(string)*: Folder name in executor workspace where the key file is saved.
-  * **`FileName`** *(string)*: Name of the JSON key file.
-* **`ConfigSettings`** *(table)*: Handles the Auto-Saving configurations of elements (Toggles, Sliders, Dropdowns, Inputs, etc.):
-  * **`Folder`** *(string)*: Directory name in executor workspace to store configs.
-  * **`DefaultConfig`** *(string)*: Name of the default configuration loaded automatically.
+* **`ConfigSettings`** *(table)*: Handles the Auto-Saving configurations of elements. Config files are saved inside `<RootFolder>/Configs/`:
+  * **`DefaultConfig`** *(string)*: Name of the default configuration loaded automatically (e.g., `"Default"` loads `<RootFolder>/Configs/Default.json`).
 * **`FloatButton`** *(table)*: Circular draggable button (FAB) shown when the GUI is minimized:
   * **`Enabled`** *(boolean)*: Whether the FAB is enabled. Default is `true`.
   * **`Size`** *(number)*: Diameter of the circular button in pixels. Default is `60`.
@@ -400,17 +412,119 @@ SteamyUI is heavily optimized for low-end mobile devices:
 If `ConfigSettings` is enabled in `CreateWindow`, you can trigger manual save, load, and deletion processes:
 
 ```lua
--- Save current values into file named "aim_setup.json"
+-- Save current values into file named "aim_setup.json" (saves to executor <RootFolder>/Configs/ folder)
 Window:SaveConfig("aim_setup")
 
--- Load values stored inside "aim_setup.json"
+-- Load values stored inside "aim_setup.json" from <RootFolder>/Configs/
 Window:LoadConfig("aim_setup")
 
--- Delete "aim_setup.json" config file
+-- Delete "aim_setup.json" config file from <RootFolder>/Configs/
 Window:DeleteConfig("aim_setup")
 
--- Returns a list of all existing saved configs
+-- Returns a list of all existing configs in <RootFolder>/Configs/
 local configs = Window:GetConfigs()
+```
+
+---
+
+### 🛠️ Creating a Custom Settings Tab (Developer Reference)
+SteamyUI does not enforce a hardcoded Settings tab. Instead, you can build a customized settings tab directly using the standard UI components and utilities:
+
+```lua
+-- 1. Create a Settings Tab
+local SettingsTab = Window:AddTab({
+    Title = "Settings",
+    Icon = "settings"
+})
+
+-- 2. Theme Selection Section
+local appearance = SettingsTab:AddSection({ Title = "Appearance" })
+appearance:AddDropdown("ThemeSelect", {
+    Title = "UI Theme",
+    Description = "Choose a color palette for the interface",
+    Values = {"Darker", "Dark", "Light", "Aqua", "Amethyst", "Darker Blue Neon", "Light Cyan Neon", "Darker Emerald Neon", "Darker Purple Neon"},
+    Default = "Darker",
+    Callback = function(themeName)
+        SteamyUI:SetTheme(themeName)
+    end
+})
+
+-- 3. Window Toggle Keybind Section
+local controls = SettingsTab:AddSection({ Title = "Controls" })
+controls:AddKeybind("ToggleBind", {
+    Title = "Window Toggle Key",
+    Description = "Key used to minimize or restore the main window",
+    Default = Window.ToggleKey,
+    Callback = function(key)
+        Window.ToggleKey = key
+    end
+})
+
+-- 4. Configurations Directory Section
+local configSection = SettingsTab:AddSection({ Title = "Configurations" })
+
+local configNameInput = configSection:AddInput("ConfigName", {
+    Title = "Config File Name",
+    Placeholder = "Enter filename...",
+    Default = ""
+})
+
+-- List config files
+local configsList = Window:GetConfigs()
+local configDropdown = configSection:AddDropdown("SelectedConfig", {
+    Title = "Select Config",
+    Description = "Choose a file to load or delete",
+    Values = configsList,
+    Default = "",
+    Callback = function(val)
+        if val ~= "" then
+            configNameInput:SetValue(val) -- Sync selection to the text box
+        end
+    end
+})
+
+configSection:AddButton({
+    Title = "Save Config",
+    Callback = function()
+        local name = configNameInput:GetValue()
+        if name ~= "" then
+            Window:SaveConfig(name)
+            configDropdown:SetValues(Window:GetConfigs()) -- Refresh options list
+        end
+    end
+})
+
+configSection:AddButton({
+    Title = "Load Config",
+    Callback = function()
+        local selected = configDropdown:GetValue()
+        if selected ~= "" then
+            Window:LoadConfig(selected)
+        end
+    end
+})
+
+configSection:AddButton({
+    Title = "Delete Config",
+    Callback = function()
+        local selected = configDropdown:GetValue()
+        if selected ~= "" then
+            Window:DeleteConfig(selected)
+            configDropdown:SetValues(Window:GetConfigs()) -- Refresh options list
+        end
+    end
+})
+
+-- 5. Destruction Section
+local danger = SettingsTab:AddSection({ Title = "Danger Zone" })
+danger:AddButton({
+    Title = "Unload UI",
+    Description = "Completely delete the GUI and release resources",
+    Icon = "trash",
+    Callback = function()
+        Window:Destroy()
+    end
+})
 ```
 
 ---
@@ -436,4 +550,3 @@ You can initialize SteamyUI with any of the following themes using the `Theme` p
 Pass these names to the `Icon` parameter of elements such as Tabs or Buttons (e.g. `Icon = "terminal"`):
 
 `home` | `settings` | `user` | `lock` | `unlock` | `check` | `check-circle` | `alert-triangle` | `alert-circle` | `chevron-right` | `chevron-down` | `chevron-up` | `chevron-left` | `copy` | `link` | `discord` | `globe` | `search` | `eye` | `eye-off` | `trash` | `play` | `refresh` | `palette` | `info` | `folder` | `file` | `plus` | `minus` | `x` | `menu` | `bell` | `terminal` | `code` | `database` | `sliders`
-
