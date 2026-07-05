@@ -1,4 +1,7 @@
 # ♨️ SteamyUI
+
+**SteamyUI** is a modern, responsive, and performance-optimized UI library designed for Roblox Script Hubs. It features smooth spring transitions, full Mobile/Tablet layout adaptation, a draggable Floating Action Button (FAB) when minimized, and advanced memory management to prevent client lag.
+
 ---
 
 ## 🚀 Quick Start
@@ -19,78 +22,111 @@ local SteamyUI = require(game:GetService("ReplicatedStorage"):WaitForChild("Stea
 
 ---
 
-## 🛠️ API Reference & Components
+## 🛠️ API Reference & Parameter Breakdowns
 
-Here is a comprehensive guide to utilizing all components available in SteamyUI.
+Every component and function option in SteamyUI is detailed below with parameter definitions.
 
-### 1. Window Initialization
-Creates the main user interface window container. It supports an integrated Key Authorization System, Auto-Configurations, and a customizable Floating Action Button (FAB).
+### 1. Window Initialization (`SteamyUI:CreateWindow`)
+Creates the main user interface window container. It handles responsive layouts, integrated license verification, configurations, and Floating Action Buttons.
 
 ```lua
 local Window = SteamyUI:CreateWindow({
     Title = "SteamyUI",
     SubTitle = "v1.0.0 | Premium Script Hub",
-    Logo = "rbxassetid://133673716990208", -- Roblox Asset or Decal ID (autoresolved dynamically)
-    Size = UDim2.new(0, 580, 0, 430),       -- Default window size for PC
+    Logo = "rbxassetid://133673716990208", 
+    Size = UDim2.new(0, 580, 0, 430),       
+    Theme = "Darker",                       
     
-    -- [OPTIONAL] Key System / License Protection
     KeySystem = true,
     KeySettings = {
         Title = "Steamy Verification",
         Subtitle = "SteamyUI Security Portal",
         Description = "Enter your license key to verify access. Key is 'SecretKey123'.",
-        GetKeyLink = "https://discord.gg/steamy-ui", -- Link to acquire key
+        GetKeyLink = "https://discord.gg/steamy-ui", 
         Keys = {"SecretKey123"},
-        SaveKey = true, -- Automatically stores the key to bypass on re-injects
+        SaveKey = true, 
         Folder = "SteamyConfigs",
         FileName = "saved_key.json"
     },
     
-    -- [OPTIONAL] Auto Save/Load Configuration System
     ConfigSettings = {
         Folder = "SteamyConfigs",
         DefaultConfig = "default"
     },
     
-    -- [OPTIONAL] Floating Action Button (FAB) shown when Minimized
     FloatButton = {
         Enabled = true,
-        Size = 60,                -- Diameter of the circular button (px)
-        BorderColor = "#7C5CBF",   -- Hex color for the border
-        BorderSize = 3,            -- Thickness of the border
+        Size = 60,                
+        BorderColor = "#7C5CBF",   
+        BorderSize = 3,            
     }
 })
 ```
 
+#### **Window Configuration Options Breakdown:**
+* **`Title`** *(string)*: The main header text of the UI window (top-left).
+* **`SubTitle`** *(string)*: A small secondary text right below the title.
+* **`Logo`** *(string/number)*: Asset/Decal ID used as the GUI icon. Numeric IDs are automatically resolved via Roblox Thumbnail API.
+* **`Size`** *(UDim2)*: Size of the UI window on Desktop. Auto-rescales on Mobile/Tablets to cover viewport safe areas.
+* **`Theme`** *(string)*: The startup color theme. Options: `"Darker"` *(default)*, `"Dark"`, `"Light"`, `"Aqua"`.
+* **`HasSettings`** *(boolean)*: If set to `true`, automatically builds an options/settings tab. Default is `true`.
+* **`KeySystem`** *(boolean)*: Set to `true` to block the main GUI until key verification succeeds.
+* **`KeySettings`** *(table)*: Authorization panel configuration (active only if `KeySystem = true`):
+  * **`Title`** *(string)*: Header text of the Key System popup.
+  * **`Subtitle`** *(string)*: Small text under the title.
+  * **`Description`** *(string)*: Instructions for the user.
+  * **`GetKeyLink`** *(string)*: URL shown to the user (e.g. Linkvertise, Discord) where they can obtain a key.
+  * **`Keys`** *(array of strings)*: List of valid activation keys.
+  * **`SaveKey`** *(boolean)*: Auto-saves successfully entered keys to bypass the key system on subsequent injects.
+  * **`Folder`** *(string)*: Folder name in executor workspace where the key file is saved.
+  * **`FileName`** *(string)*: Name of the JSON key file.
+* **`ConfigSettings`** *(table)*: Handles the Auto-Saving configurations of elements (Toggles, Sliders, Dropdowns, Inputs, etc.):
+  * **`Folder`** *(string)*: Directory name in executor workspace to store configs.
+  * **`DefaultConfig`** *(string)*: Name of the default configuration loaded automatically.
+* **`FloatButton`** *(table)*: Circular draggable button (FAB) shown when the GUI is minimized:
+  * **`Enabled`** *(boolean)*: Whether the FAB is enabled. Default is `true`.
+  * **`Size`** *(number)*: Diameter of the circular button in pixels. Default is `60`.
+  * **`BorderColor`** *(string)*: Hex color of the FAB's border (e.g. `"#7C5CBF"`).
+  * **`BorderSize`** *(number)*: Pixels width of the FAB border. Default is `3`.
+
 ---
 
-### 2. Add Tab
+### 2. Tabs (`Window:AddTab`)
 Creates a category section on the left navigation bar.
 
 ```lua
 local HomeTab = Window:AddTab({
     Title = "Home",
-    Icon = "home" -- Icon name (e.g., home, terminal, eye, settings, sliders)
+    Icon = "home" 
 })
 ```
 
+#### **Tab Options Breakdown:**
+* **`Title`** *(string)*: Display name on the left sidebar.
+* **`Icon`** *(string)*: Name of the Lucide icon used alongside the title (e.g., `"home"`, `"settings"`, `"terminal"`, `"sliders"`).
+
 ---
 
-### 3. Add Section
-Organizes elements visually inside a Tab. Sections are **collapsible** (accordion-style) by default with dynamic spring-like animations.
+### 3. Sections (`Tab:AddSection`)
+Organizes elements visually inside a Tab.
 
 ```lua
 local aimSection = HomeTab:AddSection({
     Title = "Silent Aim Settings",
-    Collapsible = true,  -- Enables accordion collapse/expand on header click (default: true)
-    DefaultOpen = false  -- Sets initial expansion state (default: false)
+    Collapsible = true,  
+    DefaultOpen = false  
 })
 ```
 
+#### **Section Options Breakdown:**
+* **`Title`** *(string)*: Section header text.
+* **`Collapsible`** *(boolean)*: Enables clicking the header to collapse/expand (default: `true`).
+* **`DefaultOpen`** *(boolean)*: Initial accordion expansion state (default: `false`).
+
 ---
 
-### 4. Toggle
-A checkbox element representing a boolean (`true`/`false`) value.
+### 4. Toggle (`Section:AddToggle`)
+A checkbox representing a boolean value (`true`/`false`).
 
 ```lua
 aimSection:AddToggle("SilentAimEnabled", {
@@ -103,10 +139,16 @@ aimSection:AddToggle("SilentAimEnabled", {
 })
 ```
 
+#### **Toggle Options Breakdown:**
+* **`Title`** *(string)*: Display name.
+* **`Description`** *(string)*: Small descriptive text.
+* **`Default`** *(boolean)*: Starting state (`true`/`false`).
+* **`Callback`** *(function)*: Fires when state changes, returning a boolean `state` parameter.
+
 ---
 
-### 5. Slider
-An interactive slider for fine-tuning numerical adjustments.
+### 5. Slider (`Section:AddSlider`)
+An interactive slider for numerical adjustments.
 
 ```lua
 aimSection:AddSlider("SilentAimFOV", {
@@ -115,126 +157,174 @@ aimSection:AddSlider("SilentAimFOV", {
     Min = 10,
     Max = 360,
     Default = 90,
+    Decimal = 0,
     Callback = function(value)
         print("FOV set to:", value)
     end
 })
 ```
 
+#### **Slider Options Breakdown:**
+* **`Title`** *(string)*: Display name.
+* **`Description`** *(string)*: Small descriptive text.
+* **`Min`** *(number)*: The minimum selectable value.
+* **`Max`** *(number)*: The maximum selectable value.
+* **`Default`** *(number)*: Starting value.
+* **`Decimal`** *(number)*: Rounding decimal places (`0` for integers, `1`/`2` for fractions).
+* **`Callback`** *(function)*: Fires on slider changes, returning a numerical `value`.
+
 ---
 
-### 6. Dropdown
-A menu allowing selection of a single value or multiple values. When clicked, it smoothly slides in a premium **side-sheet selection drawer** from the right edge of the window. Supports search query filtering dynamically. Selected items feature a clean left vertical indicator strip.
+### 6. Dropdown (`Section:AddDropdown`)
+A selection menu. Clicking slides in a side-sheet selection panel from the right. Selected items feature a clean left vertical indicator strip.
 
 ```lua
--- Multi-Select Dropdown Example
 aimSection:AddDropdown("SilentAimTarget", {
     Title = "Target Body Parts",
     Description = "Select target hit box alignments",
     Values = {"Head", "Torso", "Left Arm", "Right Arm"},
-    MultiSelect = true,  -- Support multiple checked selections
-    Searchable = true,   -- Adds a search filter input (default: true)
-    Default = {"Head"},  -- Initial selections
+    MultiSelect = true,  
+    Searchable = true,   
+    Default = {"Head"},  
     Callback = function(selectedItems)
         print("Target parts chosen:", table.concat(selectedItems, ", "))
     end
 })
 ```
 
+#### **Dropdown Options Breakdown:**
+* **`Title`** *(string)*: Display name.
+* **`Description`** *(string)*: Small descriptive text.
+* **`Values`** *(array of strings)*: List of options to show in the dropdown list.
+* **`MultiSelect`** *(boolean)*: Allows selecting multiple options concurrently (adds checkmarks). If `false`, clicking an option closes the drawer.
+* **`Searchable`** *(boolean)*: Adds a search filter input field at the top of the side drawer. Default is `true`.
+* **`Default`** *(string or array of strings)*: Initial selection(s).
+* **`Callback`** *(function)*: Fires when a selection changes. Returns a table of strings if `MultiSelect = true`, or a single string if `MultiSelect = false`.
+
 ---
 
-### 7. Input
-A text field allowing keyboard input.
+### 7. Input (`Section:AddInput`)
+A text field allowing keyboard inputs.
 
 ```lua
 aimSection:AddInput("TargetPlayer", {
     Title = "Target Player Username",
     Placeholder = "Enter username...",
+    Default = "",
+    ClearTextOnFocus = false,
     Callback = function(text, enterPressed)
         print("Input text:", text, "Enter pressed:", enterPressed)
     end
 })
 ```
 
+#### **Input Options Breakdown:**
+* **`Title`** *(string)*: Display name.
+* **`Placeholder`** *(string)*: Ghost text shown in the input box when it is empty.
+* **`Default`** *(string)*: Starting text.
+* **`ClearTextOnFocus`** *(boolean)*: Clears the input field as soon as the user clicks inside. Default is `false`.
+* **`Callback`** *(function)*: Fires when the input box loses focus. Returns `text` (string) and `enterPressed` (boolean indicating if they hit the Enter key).
+
 ---
 
-### 8. Color Picker
-An interactive palette providing HSV adjustments to return a `Color3` object.
+### 8. Color Picker (`Section:AddColorPicker`)
+An interactive picker providing Hue, Saturation, Value sliders and presets to return a `Color3`.
 
 ```lua
 espSection:AddColorPicker("EspBoxColor", {
     Title = "ESP Box Color",
     Description = "Change visual ESP box tint color",
-    Default = Color3.fromRGB(0, 255, 128), -- Neon Emerald Green
+    Default = Color3.fromRGB(0, 255, 128), 
     Callback = function(color)
         print("ESP Color changed:", color)
     end
 })
 ```
 
+#### **Color Picker Options Breakdown:**
+* **`Title`** *(string)*: Display name.
+* **`Description`** *(string)*: Small descriptive text.
+* **`Default`** *(Color3)*: Initial color value.
+* **`Callback`** *(function)*: Fires on color adjustments, returning a `Color3` object.
+
 ---
 
-### 9. Button
-A clickable button containing a smooth ripple feedback animation.
+### 9. Button (`Section:AddButton`)
+A clickable button containing smooth ripple click feedback.
 
 ```lua
 testSection:AddButton({
     Title = "Reset Configuration",
     Description = "Restores all elements to default configurations",
-    Icon = "refresh-cw", -- Optional Lucide icon name
+    Icon = "refresh-cw", 
     Callback = function()
         print("Settings reset requested.")
     end
 })
 ```
 
+#### **Button Options Breakdown:**
+* **`Title`** *(string)*: Display name.
+* **`Description`** *(string)*: Small descriptive text.
+* **`Icon`** *(string)*: Optional Lucide icon name.
+* **`Callback`** *(function)*: Code executed when the button is clicked.
+
 ---
 
-### 10. Progress Bar
-Displays percentage bars representing loader states or file downloads.
+### 10. Progress Bar (`Section:AddProgressBar`)
+Displays a progress indicator bar.
 
 ```lua
 local progress = visualElementsSection:AddProgressBar({
     Title = "Asset Downloader Progress",
-    Default = 25 -- Initiates at 25%
+    Default = 25 
 })
-
--- Dynamically update progress from anywhere
-progress:SetProgress(75) -- Changes progress to 75%
+progress:SetProgress(75) 
 ```
+
+#### **Progress Bar Options Breakdown:**
+* **`Title`** *(string)*: Display name.
+* **`Default`** *(number)*: Starting percentage (0 - 100).
+* **Methods**:
+  * **`progress:SetProgress(number)`**: Changes progress bar fill percentage.
 
 ---
 
-### 11. Loading Indicator
+### 11. Loading Indicator (`Section:AddLoadingIndicator`)
 Displays a looping loading ring (spinning/pulsing).
 
 ```lua
 visualElementsSection:AddLoadingIndicator({
-    Size = 32 -- Size diameter (px)
+    Size = 32 
 })
 ```
 
+#### **Loading Indicator Options Breakdown:**
+* **`Size`** *(number)*: Size diameter in pixels. Default is `28`.
+
 ---
 
-### 12. Paragraph & Label
+### 12. Paragraph & Label (`Section:AddParagraph` / `Section:AddLabel`)
 Renders static text blocks.
 
 ```lua
--- Paragraph: Renders a large Title and a detailed description block
 welcomeSection:AddParagraph({
     Title = "Update Notice",
-    Content = "SteamyUI updated to v1.0.0 with smooth spring animations!"
+    Content = "SteamyUI updated to v1.0.0!"
 })
 
--- Label: Renders a simple, clean, one-line string
 welcomeSection:AddLabel({
     Text = "Current Server Status: ONLINE"
 })
 ```
 
+#### **Paragraph & Label Options Breakdown:**
+* **Paragraph `Title` & `Content`** *(strings)*: Renders a large bold title with a multi-line content block below.
+* **Label `Text`** *(string)*: Renders a single-line, lightweight text block.
+
 ---
 
-### 13. Dialog Prompt
+### 13. Dialog Prompt (`Window:Dialog`)
 Triggers a modal dialog in the middle of the viewport that locks background UI interaction.
 
 ```lua
@@ -250,35 +340,41 @@ Window:Dialog({
         },
         {
             Text = "Cancel",
-            Style = "Cancel" -- Uses the Cancel color palette style
+            Style = "Cancel" 
         }
     }
 })
 ```
 
+#### **Dialog Options Breakdown:**
+* **`Title`** *(string)*: Modal header.
+* **`Content`** *(string)*: Message content.
+* **`Buttons`** *(array of tables)*: Custom action buttons:
+  * **`Text`** *(string)*: Label.
+  * **`Style`** *(string)*: Design styling (`"Default"` or `"Cancel"`).
+  * **`Callback`** *(function)*: Fires when clicked.
+
 ---
 
-### 14. Toast Notification
+### 14. Toast Notification (`Window:Notify`)
 Spawns toast message pop-ups at the bottom-right corner.
 
 ```lua
 Window:Notify({
     Title = "Execution Success!",
     Content = "SteamyUI loaded in 0.05s without issues.",
-    Icon = "check-circle", -- Lucide icon name
-    Type = "Success",       -- Notification Type: Success, Info, Warning, Error
-    Duration = 5            -- Pop-up visibility duration in seconds
+    Icon = "check-circle", 
+    Type = "Success",       
+    Duration = 5            
 })
 ```
 
----
-
-### 15. Divider
-Renders a thin visual separator line.
-
-```lua
-visualElementsSection:AddDivider()
-```
+#### **Notification Options Breakdown:**
+* **`Title`** *(string)*: Bold header text.
+* **`Content`** *(string)*: Message detail.
+* **`Icon`** *(string)*: Lucide icon name.
+* **`Type`** *(string)*: Pop-up theme colors (`"Success"`, `"Info"`, `"Warning"`, `"Error"`).
+* **`Duration`** *(number)*: Seconds before the notification auto-dismisses. Default is `4`.
 
 ---
 
@@ -291,13 +387,13 @@ You can open/close or destroy the GUI programmatically via Lua commands:
 -- Toggle visibility (Minimize / Restore)
 Window:Toggle()
 
--- Completely delete the GUI hierarchy and clean up event listeners
+-- Completely delete the GUI hierarchy and clean up event listeners to free RAM
 Window:Destroy()
 ```
 
 ### Memory Management & Optimizations
 SteamyUI is heavily optimized for low-end mobile devices:
-* **Garbage Collection (Memory Leaks)**: Calling `Window:Destroy()` will systematically disconnect all active `UserInputService` event connections, hover/click connections, layout recalculations, and clear references. This prevents client memory buildup on script re-injects.
+* **Garbage Collection (Memory Leaks)**: Calling `Window:Destroy()` systematically disconnects all active event connections (keyboard inputs, slider drags, text focus, layout recalculations). This prevents client memory buildup on script re-injects.
 * **CanvasGroup Optimization**: CanvasGroups are used dynamically for transitions. Propertis are disabled or set to `.Visible = false` when hidden, letting the engine bypass rendering calculations.
 
 ### Manual Configuration Management
@@ -316,3 +412,28 @@ Window:DeleteConfig("aim_setup")
 -- Returns a list of all existing saved configs
 local configs = Window:GetConfigs()
 ```
+
+---
+
+## 🎨 Supported Themes
+
+You can initialize SteamyUI with any of the following themes using the `Theme` parameter in `CreateWindow` (e.g. `Theme = "Aqua"`):
+
+* **`Darker`** *(Default)*: Extremely dark background theme with neon blue accents.
+* **`Dark`**: A standard dark charcoal interface.
+* **`Light`**: A clean, light-mode interface.
+* **`Aqua`**: Ocean-deep dark teal background with bright cyan accents.
+* **`Amethyst`**: Deep mystical purple background with vibrant purple accents.
+* **`Darker Blue Neon`**: Deep dark navy background with bright cyan neon highlights.
+* **`Light Cyan Neon`**: High-contrast light mode with sea-green highlights.
+* **`Darker Emerald Neon`**: Emerald forest dark green background with neon green highlights.
+* **`Darker Purple Neon`**: Dark orchid violet background with intense hot-magenta highlights.
+
+---
+
+## 🖼️ Supported Icons
+
+Pass these names to the `Icon` parameter of elements such as Tabs or Buttons (e.g. `Icon = "terminal"`):
+
+`home` | `settings` | `user` | `lock` | `unlock` | `check` | `check-circle` | `alert-triangle` | `alert-circle` | `chevron-right` | `chevron-down` | `chevron-up` | `chevron-left` | `copy` | `link` | `discord` | `globe` | `search` | `eye` | `eye-off` | `trash` | `play` | `refresh` | `palette` | `info` | `folder` | `file` | `plus` | `minus` | `x` | `menu` | `bell` | `terminal` | `code` | `database` | `sliders`
+
