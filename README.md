@@ -77,11 +77,13 @@ local HomeTab = Window:AddTab({
 ---
 
 ### 3. Add Section
-Organizes elements visually inside a Tab.
+Organizes elements visually inside a Tab. Sections are **collapsible** (accordion-style) by default with dynamic spring-like animations.
 
 ```lua
 local aimSection = HomeTab:AddSection({
-    Title = "Silent Aim Settings"
+    Title = "Silent Aim Settings",
+    Collapsible = true,  -- Enables accordion collapse/expand on header click (default: true)
+    DefaultOpen = false  -- Sets initial expansion state (default: false)
 })
 ```
 
@@ -122,7 +124,7 @@ aimSection:AddSlider("SilentAimFOV", {
 ---
 
 ### 6. Dropdown
-A menu allowing selection of a single value or multiple values.
+A menu allowing selection of a single value or multiple values. When clicked, it smoothly slides in a premium **side-sheet selection drawer** from the right edge of the window. Supports search query filtering dynamically. Selected items feature a clean left vertical indicator strip.
 
 ```lua
 -- Multi-Select Dropdown Example
@@ -130,8 +132,9 @@ aimSection:AddDropdown("SilentAimTarget", {
     Title = "Target Body Parts",
     Description = "Select target hit box alignments",
     Values = {"Head", "Torso", "Left Arm", "Right Arm"},
-    MultiSelect = true,
-    Default = {"Head"}, -- Initial selection
+    MultiSelect = true,  -- Support multiple checked selections
+    Searchable = true,   -- Adds a search filter input (default: true)
+    Default = {"Head"},  -- Initial selections
     Callback = function(selectedItems)
         print("Target parts chosen:", table.concat(selectedItems, ", "))
     end
@@ -291,6 +294,11 @@ Window:Toggle()
 -- Completely delete the GUI hierarchy and clean up event listeners
 Window:Destroy()
 ```
+
+### Memory Management & Optimizations
+SteamyUI is heavily optimized for low-end mobile devices:
+* **Garbage Collection (Memory Leaks)**: Calling `Window:Destroy()` will systematically disconnect all active `UserInputService` event connections, hover/click connections, layout recalculations, and clear references. This prevents client memory buildup on script re-injects.
+* **CanvasGroup Optimization**: CanvasGroups are used dynamically for transitions. Propertis are disabled or set to `.Visible = false` when hidden, letting the engine bypass rendering calculations.
 
 ### Manual Configuration Management
 If `ConfigSettings` is enabled in `CreateWindow`, you can trigger manual save, load, and deletion processes:
