@@ -49,7 +49,10 @@ Creates the main user interface window container. It handles responsive layouts,
 local Window = SteamyUI:CreateWindow({
     Title = "SteamyUI",
     SubTitle = "v1.0.0 | Premium Script Hub",
-    Logo = "rbxassetid://133673716990208", 
+    -- Logo: plain text, emoji, or max 4 characters. E.g. "S" or "🎯"
+    Logo = "S", 
+    -- LogoColor: hex code or Color3 for the neon logo badge and default FAB border
+    LogoColor = "#0078FF",
     Size = UDim2.new(0, 580, 0, 430),       
     Theme = "Darker",                       
     Folder = "Steamy",                      -- Root folder name in executor workspace
@@ -71,7 +74,7 @@ local Window = SteamyUI:CreateWindow({
     FloatButton = {
         Enabled = true,
         Size = 60,                
-        BorderColor = "#7C5CBF",   
+        -- BorderColor omitted -> automatically inherits LogoColor (#0078FF)
         BorderSize = 3,            
     }
 })
@@ -98,7 +101,7 @@ local Window = SteamyUI:CreateWindow({
 * **`FloatButton`** *(table)*: Circular draggable button (FAB) shown when the GUI is minimized:
   * **`Enabled`** *(boolean)*: Whether the FAB is enabled. Default is `true`.
   * **`Size`** *(number)*: Diameter of the circular button in pixels. Default is `60`.
-  * **`BorderColor`** *(string)*: Hex color of the FAB's border (e.g. `"#7C5CBF"`).
+  * **`BorderColor`** *(string)*: Optional hex color of the FAB's border (e.g. `"#7C5CBF"`). If omitted, automatically inherits the window `LogoColor`.
   * **`BorderSize`** *(number)*: Pixels width of the FAB border. Default is `3`.
 
 ---
@@ -109,13 +112,13 @@ Creates a category section on the left navigation bar.
 ```lua
 local HomeTab = Window:AddTab({
     Title = "Home",
-    Icon = "home" 
+    Icon = "🏠" 
 })
 ```
 
 #### **Tab Options Breakdown:**
 * **`Title`** *(string)*: Display name on the left sidebar.
-* **`Icon`** *(string)*: Name of the Lucide icon used alongside the title (e.g., `"home"`, `"settings"`, `"terminal"`, `"sliders"`).
+* **`Icon`** *(string)*: Name of the built-in emoji/text icon (e.g., `"home"`, `"settings"`, `"terminal"`, `"sliders"`). Alternatively, you can pass **any custom emoji character or string** directly (e.g., `"⚔️"`, `"🎯"`, etc.).
 
 ---
 
@@ -268,7 +271,7 @@ A clickable button containing smooth ripple click feedback.
 testSection:AddButton({
     Title = "Reset Configuration",
     Description = "Restores all elements to default configurations",
-    Icon = "refresh-cw", 
+    Icon = "refresh", 
     Callback = function()
         print("Settings reset requested.")
     end
@@ -278,7 +281,7 @@ testSection:AddButton({
 #### **Button Options Breakdown:**
 * **`Title`** *(string)*: Display name.
 * **`Description`** *(string)*: Small descriptive text.
-* **`Icon`** *(string)*: Optional Lucide icon name.
+* **`Icon`** *(string)*: Optional icon name or custom string/emoji.
 * **`Callback`** *(function)*: Code executed when the button is clicked.
 
 ---
@@ -384,7 +387,7 @@ Window:Notify({
 #### **Notification Options Breakdown:**
 * **`Title`** *(string)*: Bold header text.
 * **`Content`** *(string)*: Message detail.
-* **`Icon`** *(string)*: Lucide icon name.
+* **`Icon`** *(string)*: Icon name or custom string/emoji.
 * **`Type`** *(string)*: Pop-up theme colors (`"Success"`, `"Info"`, `"Warning"`, `"Error"`).
 * **`Duration`** *(number)*: Seconds before the notification auto-dismisses. Default is `4`.
 
@@ -547,6 +550,6 @@ You can initialize SteamyUI with any of the following themes using the `Theme` p
 
 ## 🖼️ Supported Icons
 
-Pass these names to the `Icon` parameter of elements such as Tabs or Buttons (e.g. `Icon = "terminal"`):
+Pass these names to the `Icon` parameter of elements such as Tabs or Buttons (e.g. `Icon = "terminal"`). Note that **you can also pass any direct unicode string/emoji** (like `"⚔️"`, `"🔥"`, `"🔫"`) and it will render perfectly!
 
-`home` | `settings` | `user` | `lock` | `unlock` | `check` | `check-circle` | `alert-triangle` | `alert-circle` | `chevron-right` | `chevron-down` | `chevron-up` | `chevron-left` | `copy` | `link` | `discord` | `globe` | `search` | `eye` | `eye-off` | `trash` | `play` | `refresh` | `palette` | `info` | `folder` | `file` | `plus` | `minus` | `x` | `menu` | `bell` | `terminal` | `code` | `database` | `sliders`
+`home` (🏠) | `settings` (⚙) | `menu` (☰) | `search` (🔍) | `user` (👤) | `lock` (🔒) | `unlock` (🔓) | `key` (🔑) | `discord` (💬) | `globe` (🌐) | `play` (▶) | `refresh` (↺) | `copy` (📋) | `link` (🔗) | `trash` (🗑) | `plus` (+) | `minus` (−) | `x` (✕) | `check` (✓) | `check-circle` (✅) | `info` (ℹ) | `alert-triangle` (⚠) | `alert-circle` (⊘) | `bell` (🔔) | `chevron-right` (›) | `chevron-left` (‹) | `chevron-down` (⌄) | `chevron-up` (⌃) | `folder` (📁) | `file` (📄) | `database` (🗄) | `save` (💾) | `eye` (👁) | `eye-off` (🙈) | `palette` (🎨) | `terminal` (>_) | `code` (</>) | `sliders` (⧉)
